@@ -4,41 +4,126 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Data API</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
 <style>
-  :root { color-scheme: light dark; --fg: #111; --bg: #fafafa; --mut: #666; --line: #ddd; --acc: #0a7d3c; }
-  @media (prefers-color-scheme: dark) { :root { --fg: #eee; --bg: #111; --mut: #999; --line: #333; --acc: #4ade80; } }
-  body { font: 16px/1.5 ui-monospace, Menlo, monospace; color: var(--fg); background: var(--bg); max-width: 640px; margin: 0 auto; padding: 48px 16px; }
-  h1 { font-size: 28px; margin: 0 0 8px; }
-  p, label { color: var(--mut); }
-  form, section { border: 1px solid var(--line); padding: 16px; margin: 24px 0; }
-  input, button { font: inherit; padding: 8px; width: 100%; box-sizing: border-box; margin: 4px 0 12px; }
-  button { background: var(--acc); color: var(--bg); border: 0; cursor: pointer; }
-  pre { overflow-x: auto; border: 1px solid var(--line); padding: 12px; }
-  a { color: var(--acc); }
-  [hidden] { display: none; }
+  /* Edit the copy in this file and these six colours; nothing else needs to change. */
+  :root { --ink: #16233a; --body: #47536a; --paper: #fbfaf7; --card: #fff; --line: #e3dfd6; --brand: #1d4f8c; --ok: #1f7a4d; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 17px/1.6 "Public Sans", system-ui, sans-serif; color: var(--body); background: var(--paper); }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
+  header .wrap { display: flex; justify-content: space-between; align-items: center; padding-top: 22px; padding-bottom: 22px; }
+  .logo { font: 600 20px "Source Serif 4", Georgia, serif; color: var(--ink); text-decoration: none; }
+  nav a { color: var(--body); text-decoration: none; margin-left: 28px; font-size: 15px; }
+  nav a:hover { color: var(--brand); }
+  h1, h2, h3 { font-family: "Source Serif 4", Georgia, serif; color: var(--ink); font-weight: 600; margin: 0; }
+  h1 { font-size: clamp(34px, 5vw, 52px); line-height: 1.12; letter-spacing: -0.01em; }
+  h2 { font-size: 28px; margin-bottom: 8px; }
+  h3 { font-size: 19px; margin-bottom: 6px; }
+  .hero { display: grid; grid-template-columns: 1.15fr 1fr; gap: 56px; align-items: start; padding-top: 56px; padding-bottom: 72px; }
+  .hero p.lead { font-size: 19px; margin: 20px 0 28px; max-width: 30em; }
+  .ticks { list-style: none; padding: 0; margin: 0; font-size: 15px; }
+  .ticks li { padding-left: 26px; position: relative; margin: 6px 0; }
+  .ticks li::before { content: "✓"; position: absolute; left: 0; color: var(--ok); font-weight: 600; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 28px; box-shadow: 0 1px 2px rgba(22,35,58,.04), 0 12px 32px -16px rgba(22,35,58,.18); }
+  .card p { margin: 4px 0 18px; font-size: 15px; }
+  label { display: block; font-size: 14px; font-weight: 500; color: var(--ink); margin-bottom: 14px; }
+  input { display: block; width: 100%; margin-top: 6px; padding: 11px 12px; font: inherit; color: var(--ink); background: #fff; border: 1px solid #c9c4b8; border-radius: 6px; }
+  input:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+  button { width: 100%; padding: 12px 16px; font: 600 16px "Public Sans", system-ui, sans-serif; border-radius: 6px; cursor: pointer; border: 1px solid var(--brand); background: var(--brand); color: #fff; }
+  button:hover { filter: brightness(1.08); }
+  button.quiet { background: transparent; color: var(--brand); margin-top: 10px; }
+  .band { background: #fff; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 64px 0; }
+  .three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-top: 32px; }
+  .three p { margin: 0; font-size: 16px; }
+  .sample { display: grid; grid-template-columns: 1fr 1.2fr; gap: 48px; align-items: center; padding-top: 64px; padding-bottom: 72px; }
+  pre { margin: 0; padding: 18px 20px; overflow-x: auto; font: 13.5px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--ink); background: #f4f2ec; border: 1px solid var(--line); border-radius: 8px; }
+  #keybox pre { margin-bottom: 10px; white-space: pre-wrap; word-break: break-all; }
+  a { color: var(--brand); }
+  #msg { color: #a12b2b; font-size: 14px; min-height: 1.4em; margin: 10px 0 0; }
+  footer { border-top: 1px solid var(--line); padding: 28px 0 40px; font-size: 14px; }
+  [hidden] { display: none !important; }
+  @media (max-width: 820px) {
+    .hero, .sample, .three { grid-template-columns: 1fr; gap: 32px; }
+    .hero { padding-top: 32px; padding-bottom: 48px; }
+    nav a { margin-left: 18px; }
+  }
 </style>
 </head>
 <body>
-<h1>Data API</h1>
-<p>Sign up, create an API key, query the data. <a href="/docs">API docs</a></p>
+<header><div class="wrap">
+  <a class="logo" href="/">Your Company</a>
+  <nav><a href="#how">How it works</a><a href="/docs">API documentation</a></nav>
+</div></header>
 
-<form id="auth">
-  <label>Email <input name="email" type="email" required autocomplete="email"></label>
-  <label>Password (8+ characters) <input name="password" type="password" minlength="8" required autocomplete="current-password"></label>
-  <button name="mode" value="sign-up">Sign up</button>
-  <button name="mode" value="sign-in">Sign in</button>
-</form>
-
-<section id="dash" hidden>
-  <p>Signed in as <span id="who"></span>. <a href="#" id="out">Sign out</a></p>
-  <button id="newkey">Create API key</button>
-  <div id="keybox" hidden>
-    <p>Copy it now. It is shown once.</p>
-    <pre id="key"></pre>
-    <pre id="curl"></pre>
+<main>
+<div class="wrap hero">
+  <div>
+    <h1>Organization data your team can put to work today</h1>
+    <p class="lead">Clean, structured records delivered through a simple API. Look up an organization, filter by state and year, and pull the results straight into your CRM or spreadsheet.</p>
+    <ul class="ticks">
+      <li>Free to start, no credit card</li>
+      <li>Your own API key in under a minute</li>
+      <li>Plain documentation with copy-and-paste examples</li>
+    </ul>
   </div>
-</section>
-<p id="msg" role="status"></p>
+
+  <div class="card" id="start">
+    <form id="auth">
+      <h3>Create your free account</h3>
+      <p>Already have one? Enter your details and choose Sign in.</p>
+      <label>Work email <input name="email" type="email" required autocomplete="email"></label>
+      <label>Password (8 or more characters) <input name="password" type="password" minlength="8" required autocomplete="current-password"></label>
+      <button name="mode" value="sign-up">Create account</button>
+      <button class="quiet" name="mode" value="sign-in">Sign in</button>
+    </form>
+
+    <section id="dash" hidden>
+      <h3>Your account</h3>
+      <p>Signed in as <strong id="who"></strong>. <a href="#" id="out">Sign out</a></p>
+      <button id="newkey">Create API key</button>
+      <div id="keybox" hidden>
+        <p style="margin-top:18px">Copy your key now. For your security it is shown only once.</p>
+        <pre id="key"></pre>
+        <pre id="curl"></pre>
+      </div>
+    </section>
+    <p id="msg" role="status"></p>
+  </div>
+</div>
+
+<div class="band" id="how"><div class="wrap">
+  <h2>How it works</h2>
+  <div class="three">
+    <div><h3>1. Create an account</h3><p>Sign up with your work email. There is nothing to install and no sales call.</p></div>
+    <div><h3>2. Get your key</h3><p>Generate an API key from your account. It identifies your requests and keeps your usage separate.</p></div>
+    <div><h3>3. Query the data</h3><p>Ask for exactly the records you need. Results come back in a standard format every tool can read.</p></div>
+  </div>
+</div></div>
+
+<div class="wrap sample">
+  <div>
+    <h2>One request, one clear answer</h2>
+    <p>Every record has the same fields, so there is no cleanup before you use it. The <a href="/docs">documentation</a> lists every filter and shows a working example for each.</p>
+  </div>
+<pre>GET /v1/orgs?state=NY
+
+{
+  "data": [
+    {
+      "id": 1,
+      "name": "Harbor Light Foundation",
+      "state": "NY",
+      "employees": 42,
+      "year": 2024
+    }
+  ]
+}</pre>
+</div>
+</main>
+
+<footer><div class="wrap">Your Company · <a href="/docs">API documentation</a></div></footer>
 
 <script>
 const $ = (id) => document.getElementById(id)
