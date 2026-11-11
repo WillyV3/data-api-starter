@@ -1,0 +1,33 @@
+{
+  "name": "data-api-starter",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy --minify",
+    "typecheck": "wrangler types && tsc",
+    "test": "vitest run",
+    "cf-typegen": "wrangler types",
+    "auth:generate": "pnpm dlx auth@1.7.16 generate --config auth.config.ts --output src/db/auth-schema.ts -y",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate:local": "wrangler d1 migrations apply DB --local",
+    "db:migrate:remote": "wrangler d1 migrations apply DB --remote",
+    "db:seed:local": "wrangler d1 execute DB --local --file seed.sql",
+    "db:seed:remote": "wrangler d1 execute DB --remote --file seed.sql"
+  },
+  "dependencies": {
+    "@better-auth/api-key": "1.7.16",
+    "@hono/zod-openapi": "1.6.3",
+    "@scalar/hono-api-reference": "0.12.17",
+    "better-auth": "1.7.16",
+    "drizzle-orm": "0.45.4",
+    "hono": "^4.13.16",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-plugin": "1.5.1",
+    "drizzle-kit": "0.31.11",
+    "typescript": "7.0.2",
+    "vitest": "^5.1.0",
+    "wrangler": "^4.157.0"
+  }
+}
